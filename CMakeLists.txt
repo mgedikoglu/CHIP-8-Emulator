@@ -1,9 +1,24 @@
-cmake_minimum_required(VERSION 3.20)  # CMake version check
-project(CHIP-8-Emulator)        
-set(CMAKE_CXX_STANDARD 14)            # Enable c++14 standard
+cmake_minimum_required(VERSION 3.20)
+project(emulator)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add main.cpp file of the project root directory as a source file
-set(SOURCE_FILES main.cpp)
+find_package(glfw3 REQUIRED)
+find_package(OpenGL REQUIRED)
 
-# Add executable target with source files listed in SOURCE_FILES variable
-add_executable(emulator ${SOURCE_FILES})
+set(SOURCE_FILES src/main.cpp)
+
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+
+target_link_libraries(${PROJECT_NAME}
+    glfw
+    OpenGL::GL
+)
+
+if(APPLE)
+    target_link_libraries(${PROJECT_NAME}
+        "-framework Cocoa"
+        "-framework IOKit"
+        "-framework CoreVideo"
+    )
+endif()
