@@ -458,7 +458,40 @@ void Chip8::opRND()
 /**
  * @brief DXYN: Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels. Each row of 8 pixels is read as bit-coded starting from memory location I; I value does not change after the execution of this instruction. VF is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that does not happen.
  */
-void Chip8::opDRW() {}
+void Chip8::opDRW()
+{
+  uint8_t x = (opcode & 0x0F00) >> 8;
+  uint8_t y = (opcode & 0x00F0) >> 4;
+  uint8_t height = (opcode & 0x000F);
+
+  uint8_t origin_x = V[x] % SCREEN_WIDTH;
+  uint8_t origin_y = V[y] % SCREEN_HEIGHT;
+
+  V[0xF] = 0; // reset collision flag
+
+  for (int row = 0; row < height; ++row)
+  {
+    uint8_t sprite_row = memory[I + row];
+
+    for (int col = 0; col < 8; ++col)
+    {
+      uint8_t sprite_pixel = (sprite_row >> (7 - col)) & 1;
+      if (sprite_pixel == 0)
+        continue; // not draw
+
+      int pixel_x = (origin_x + col) % SCREEN_WIDTH;
+      int pixel_y = (origin_y + row) % SCREEN_HEIGHT;
+      int pixel_index = pixel_y * SCREEN_WIDTH + pixel_x;
+
+      if (gfx[pixel_index] == 1)
+        V[0xF] = 1; // collision detection
+
+      gfx[pixel_index] ^= 1;
+    }
+  }
+
+  pc += 2;
+}
 
 /**
  * @brief EX9E: Skips the next instruction if the key stored in VX (only consider the lowest nibble) is pressed (usually the next instruction is a jump to skip a code block).

@@ -3,6 +3,9 @@
 #include <random>
 #include <cstdint>
 
+#define SCREEN_WIDTH 64
+#define SCREEN_HEIGHT 32
+
 class Chip8
 {
 public:
@@ -20,15 +23,15 @@ public:
     };
 
 private:
-    uint8_t memory[4096]; // 4K memory
-    uint16_t opcode;      // 2 bytes each
-    uint8_t V[16];        // CPU registers - 15 general purpose - 1 carry flag
-    uint16_t I;           // Index register - 0x000 to 0xFFF
-    uint16_t pc;          // Program counter - 0x000 to 0xFFF
-    uint16_t stack[16];   // store pc in stack before jump
-    uint16_t sp;          // stack pointer
-    uint8_t gfx[64 * 32]; // 2048 pixels
-    uint8_t key[16];      // 0x0 to 0xF keypad
+    uint8_t memory[4096];                      // 4K memory
+    uint16_t opcode;                           // 2 bytes each
+    uint8_t V[16];                             // CPU registers - 15 general purpose - 1 carry flag
+    uint16_t I;                                // Index register - 0x000 to 0xFFF
+    uint16_t pc;                               // Program counter - 0x000 to 0xFFF
+    uint16_t stack[16];                        // store pc in stack before jump
+    uint16_t sp;                               // stack pointer
+    uint8_t gfx[SCREEN_WIDTH * SCREEN_HEIGHT]; // 2048 pixels
+    uint8_t key[16];                           // 0x0 to 0xF keypad
 
     uint8_t delay_timer;
     uint8_t sound_timer;
