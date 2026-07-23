@@ -496,17 +496,35 @@ void Chip8::opDRW()
 /**
  * @brief EX9E: Skips the next instruction if the key stored in VX (only consider the lowest nibble) is pressed (usually the next instruction is a jump to skip a code block).
  */
-void Chip8::opSKP_Vx() {}
+void Chip8::opSKP_Vx()
+{
+  uint8_t x = (opcode & 0x0F00) >> 8;
+  if (key[V[x] & 0x0F] == 1)
+    pc += 4;
+  else
+    pc += 2;
+}
 
 /**
  * @brief EXA1: Skips the next instruction if the key stored in VX (only consider the lowest nibble) is not pressed (usually the next instruction is a jump to skip a code block).
  */
-void Chip8::opSKNP_Vx() {}
+void Chip8::opSKNP_Vx()
+{
+  uint8_t x = (opcode & 0x0F00) >> 8;
+  if (key[V[x] & 0x0F] == 0)
+    pc += 4;
+  else
+    pc += 2;
+}
 
 /**
  * @brief FX07: Sets VX to the value of the delay timer.
  */
-void Chip8::opLD_VxDT() {}
+void Chip8::opLD_VxDT()
+{
+  V[(opcode & 0x0F00) >> 8] = delay_timer;
+  pc += 2;
+}
 
 /**
  * @brief FX0A: A key press is awaited, and then stored in VX (blocking operation, all instruction halted until next key event, delay and sound timers should continue processing).
